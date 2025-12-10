@@ -1,7 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "raylib.h"
 #include <cstddef>
+#include <vector>
 
 constexpr char VOID = ' ';
 constexpr char WALL = '#';
@@ -9,6 +11,17 @@ constexpr char BLOCKS = '@';
 constexpr char PADDLE = 'P';
 constexpr char BOUNDARY = '!';
 constexpr char BALL = '*';
+
+// New Block Types
+constexpr char RANDOM_MULTI_HIT_BLOCK = '?';
+constexpr char UNBREAKABLE_BLOCK = 'X';
+constexpr char SPEED_POWERUP_BLOCK = 'S';
+
+struct Powerup {
+    Vector2 pos;
+    bool active;
+};
+inline std::vector<Powerup> active_powerups;
 
 struct level {
     size_t rows = 0, columns = 0;
@@ -19,7 +32,8 @@ enum game_state {
     menu_state,
     in_game_state,
     paused_state,
-    victory_state
+    victory_state,
+    game_over_state
 };
 
 inline char level_1_data[] = {
@@ -62,9 +76,69 @@ inline level level_2 = {
     level_2_data
 };
 
-inline constexpr size_t level_count = 2;
+// Level 3: Introducing Unbreakable Blocks and Powerups
+inline char level_3_data[] = {
+    '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', 'X', ' ', '@', 'S', '@', ' ', 'X', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', '@', '@', '@', 'X', '@', '@', '@', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', '@', ' ', '@', 'S', '@', ' ', '@', ' ', '#',
+    '#', ' ', 'S', ' ', ' ', ' ', ' ', ' ', 'S', ' ', '#',
+    '#', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', 'P', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'
+};
+inline level level_3 = {
+    12, 11,
+    level_3_data
+};
+
+// Level 4: Introducing Random Multi-Hit Blocks
+inline char level_4_data[] = {
+    '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', '?', ' ', ' ', ' ', '?', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', 'S', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', '@', ' ', ' ', ' ', ' ', ' ', '@', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', '@', ' ', '@', ' ', '@', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', 'P', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'
+};
+inline level level_4 = {
+    12, 13,
+    level_4_data
+};
+
+// Level 5: Chaos - Everything combined
+inline char level_5_data[] = {
+    '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', 'X', ' ', '?', '?', '?', 'S', '?', '?', '?', ' ', 'X', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', '?', ' ', 'X', ' ', '@', '@', '@', ' ', 'X', ' ', '?', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', 'S', ' ', '?', ' ', '?', 'X', '?', ' ', '?', ' ', 'S', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', 'P', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+    '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'
+};
+inline level level_5 = {
+    12, 15,
+    level_5_data
+};
+
+inline constexpr size_t level_count = 5;
 inline level levels[level_count] = {
-    level_1, level_2
+    level_1, level_2, level_3, level_4, level_5
 };
 
 inline game_state game_state = menu_state;
