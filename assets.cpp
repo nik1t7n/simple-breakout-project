@@ -35,11 +35,22 @@ void load_sounds()
     InitAudioDevice();
     win_sound = LoadSound("data/sounds/win.wav");
     lose_sound = LoadSound("data/sounds/lose.wav");
+    pickup_sound = LoadSound("data/sounds/pickupCoin.wav");
+    unbreakable_hit_sound = LoadSound("data/sounds/blockhit.wav");
+    damage_hit_sound = LoadSound("data/sounds/hitHurt.wav");
+
+    bg_music = LoadMusicStream("data/music/AdhesiveWombat-NightShade-NO-COPYRIGHT-8-bit-Music.mp3");
+    PlayMusicStream(bg_music);
+    SetMusicVolume(bg_music, 0.5f);
 }
 
 void unload_sounds()
 {
     UnloadSound(win_sound);
     UnloadSound(lose_sound);
+    UnloadSound(pickup_sound);
+    UnloadSound(unbreakable_hit_sound);
+    UnloadSound(damage_hit_sound);
+    UnloadMusicStream(bg_music);
     CloseAudioDevice();
 }
