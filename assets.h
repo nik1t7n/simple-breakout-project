@@ -16,6 +16,11 @@ inline sprite ball_sprite;
 
 inline Sound win_sound;
 inline Sound lose_sound;
+inline Sound pickup_sound;
+inline Sound unbreakable_hit_sound;
+inline Sound damage_hit_sound;
+
+inline Music bg_music;
 
 void load_fonts();
 void unload_fonts();
