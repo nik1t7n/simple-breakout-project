@@ -28,10 +28,11 @@ constexpr size_t victory_balls_count = 360 / victory_ball_launch_degree_offset;
 constexpr float victory_balls_speed = 7.0f;
 constexpr float victory_balls_size = 3.0f;
 
-Vector2 screen_size;
-float screen_scale;
-float cell_size;
-Vector2 shift_to_center;
+// Variables defined inline in header
+// Vector2 screen_size;
+// float screen_scale;
+// float cell_size;
+// Vector2 shift_to_center;
 
 Vector2 victory_balls_pos[victory_balls_count];
 Vector2 victory_balls_vel[victory_balls_count];
@@ -166,7 +167,52 @@ void draw_level()
             case BLOCKS:
                 draw_image(block_texture, texture_x_pos, texture_y_pos, cell_size);
                 break;
-            default:;
+            case UNBREAKABLE_BLOCK:
+                // Draw darker/different wall
+                DrawRectangle(texture_x_pos, texture_y_pos, cell_size, cell_size, DARKGRAY);
+                // Or just tint the wall texture
+                {
+                    Rectangle source = { 0.0f, 0.0f, static_cast<float>(wall_texture.width), static_cast<float>(wall_texture.height) };
+                    Rectangle destination = { texture_x_pos, texture_y_pos, cell_size, cell_size };
+                    DrawTexturePro(wall_texture, source, destination, { 0.0f, 0.0f }, 0.0f, GRAY);
+                }
+                break;
+            case SPEED_POWERUP_BLOCK:
+                // Draw block with tint or overlay
+                {
+                    Rectangle source = { 0.0f, 0.0f, static_cast<float>(block_texture.width), static_cast<float>(block_texture.height) };
+                    Rectangle destination = { texture_x_pos, texture_y_pos, cell_size, cell_size };
+                    DrawTexturePro(block_texture, source, destination, { 0.0f, 0.0f }, 0.0f, ORANGE);
+                    // Draw 'S'? logic
+                    // Actually let's just use text for simplicity and clarity
+                }
+                break;
+            default:
+                // Handle Multi-Hit
+                if ((data >= '1' && data <= '9') || data == 'A' || data == 'B') {
+                    // Draw Block
+                    draw_image(block_texture, texture_x_pos, texture_y_pos, cell_size);
+
+                    // Draw Health Number
+                    std::string health_str;
+                    if (data == 'A')
+                        health_str = "10";
+                    else if (data == 'B')
+                        health_str = "11";
+                    else
+                        health_str = std::string(1, data);
+
+                    // Center the text
+                    // Font size relative to cell size
+                    float fontSize = cell_size * 0.8f;
+                    Vector2 textSize = MeasureTextEx(menu_font, health_str.c_str(), fontSize, 1.0f);
+                    Vector2 textPos = {
+                        texture_x_pos + (cell_size - textSize.x) / 2.0f,
+                        texture_y_pos + (cell_size - textSize.y) / 2.0f
+                    };
+
+                    DrawTextEx(menu_font, health_str.c_str(), textPos, fontSize, 1.0f, BLACK);
+                }
             }
         }
     }
@@ -188,17 +234,29 @@ void draw_ball()
 
 void draw_pause_menu()
 {
-    ClearBackground(BLACK);
+    // Draw semi-transparent background over the level (optional, but nice)
+    // Actually, draw_level is called before draw_pause_menu in draw(), so we can just draw a semi-transparent rect.
+    DrawRectangle(0, 0, screen_size.x, screen_size.y, Fade(BLACK, 0.7f));
 
-    const Text paused_title = {
-        "Press Escape to Resume",
-        { 0.50f, 0.50f },
-        32.0f,
+    const Text pause_title = {
+        "PAUSE",
+        { 0.50f, 0.40f },
+        48.0f,
         WHITE,
         4.0f,
         &menu_font
     };
-    draw_text(paused_title);
+    draw_text(pause_title);
+
+    const Text resume_option = {
+        "Press P to Resume",
+        { 0.50f, 0.60f },
+        24.0f,
+        GRAY,
+        2.0f,
+        &menu_font
+    };
+    draw_text(resume_option);
 }
 
 void init_victory_menu()
@@ -257,4 +315,39 @@ void draw_victory_menu()
         &menu_font
     };
     draw_text(victory_subtitle);
+}
+
+void draw_game_over_menu()
+{
+    DrawRectangleV({ 0.0f, 0.0f }, { screen_size.x, screen_size.y }, { 0, 0, 0, 200 }); // Fade out
+
+    const Text go_title = {
+        "GAME OVER",
+        { 0.50f, 0.40f },
+        120.0f,
+        RED,
+        4.0f,
+        &menu_font
+    };
+    draw_text(go_title);
+
+    const Text go_subtitle = {
+        "Press ENTER to Try Again",
+        { 0.50f, 0.60f },
+        32.0f,
+        WHITE,
+        4.0f,
+        &menu_font
+    };
+    draw_text(go_subtitle);
+
+    const Text go_menu = {
+        "Press M for Menu",
+        { 0.50f, 0.65f },
+        32.0f,
+        WHITE,
+        4.0f,
+        &menu_font
+    };
+    draw_text(go_menu);
 }
